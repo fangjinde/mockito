@@ -41,11 +41,11 @@ public class MockMethodInterceptor implements Serializable {
                        Object[] arguments,
                        InterceptedInvocation.SuperMethod superMethod) throws Throwable {
         return doIntercept(
-                mock,
-                invokedMethod,
-                arguments,
-                superMethod,
-                new LocationImpl()
+            mock,
+            invokedMethod,
+            arguments,
+            superMethod,
+            new LocationImpl()
         );
     }
 
@@ -61,7 +61,7 @@ public class MockMethodInterceptor implements Serializable {
             superMethod,
             location,
             SequenceNumber.next()
-        ));
+            , mockCreationSettings.getSpiedInstance()));
     }
 
     private MockitoMethod createMockitoMethod(Method method) {
@@ -112,15 +112,16 @@ public class MockMethodInterceptor implements Serializable {
                                                     @FieldValue("mockitoInterceptor") MockMethodInterceptor interceptor,
                                                     @Origin Method invokedMethod,
                                                     @AllArguments Object[] arguments,
-                                                    @SuperCall(serializableProxy = true) Callable<?> superCall) throws Throwable {
+                                                    @SuperCall(serializableProxy = true) Callable<?> superCall)
+            throws Throwable {
             if (interceptor == null) {
                 return superCall.call();
             }
             return interceptor.doIntercept(
-                    mock,
-                    invokedMethod,
-                    arguments,
-                    new InterceptedInvocation.SuperMethod.FromCallable(superCall)
+                mock,
+                invokedMethod,
+                arguments,
+                new InterceptedInvocation.SuperMethod.FromCallable(superCall)
             );
         }
 
@@ -135,10 +136,10 @@ public class MockMethodInterceptor implements Serializable {
                 return stubValue;
             }
             return interceptor.doIntercept(
-                    mock,
-                    invokedMethod,
-                    arguments,
-                    InterceptedInvocation.SuperMethod.IsIllegal.INSTANCE
+                mock,
+                invokedMethod,
+                arguments,
+                InterceptedInvocation.SuperMethod.IsIllegal.INSTANCE
             );
         }
     }

@@ -8,12 +8,14 @@ package org.mockito.internal.invocation;
 import org.mockito.internal.exceptions.VerificationAwareInvocation;
 import org.mockito.internal.invocation.realmethod.RealMethod;
 import org.mockito.internal.reporting.PrintSettings;
-import org.mockito.invocation.*;
-
-import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.Location;
+import org.mockito.invocation.StubInfo;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
+import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
 
 /**
  * Method call on a mock object.
@@ -40,7 +42,22 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
     final RealMethod realMethod;
     private StubInfo stubInfo;
 
-    public InvocationImpl(Object mock, MockitoMethod mockitoMethod, Object[] args, int sequenceNumber,
+
+    private RealMethod    realMethodHolder;
+    private MockitoMethod mockitoMethodHolder;
+    private Object        targetHolder;
+
+    public InvocationImpl(Object mock, MockitoMethod mockitoMethod, Object[] args,
+                             int sequenceNumber, RealMethod realMethod, Location location, Object target) {
+        this(mock, mockitoMethod, args, sequenceNumber, realMethod,location);
+
+        mockitoMethodHolder=mockitoMethod;
+        realMethodHolder=realMethod;
+        targetHolder=target;
+
+    }
+
+    private InvocationImpl(Object mock, MockitoMethod mockitoMethod, Object[] args, int sequenceNumber,
                           RealMethod realMethod, Location location) {
         this.method = mockitoMethod;
         this.mock = mock;
@@ -110,11 +127,18 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
         return method.getReturnType();
     }
 
+//    public Object callRealMethod() throws Throwable {
+//        if (method.isAbstract()) {
+//            throw cannotCallAbstractRealMethod();
+//        }
+//        return realMethod.invoke(mock, rawArguments);
+//    }
+
     public Object callRealMethod() throws Throwable {
         if (method.isAbstract()) {
             throw cannotCallAbstractRealMethod();
         }
-        return realMethod.invoke(mock, rawArguments);
+        return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
     }
 
     public void markVerified() {

@@ -4,16 +4,12 @@
  */
 package org.mockito.internal.util;
 
-import static org.mockito.internal.exceptions.Reporter.cannotMockClass;
-import static org.mockito.internal.exceptions.Reporter.extraInterfacesCannotContainMockedType;
-import static org.mockito.internal.exceptions.Reporter.mockedTypeIsInconsistentWithDelegatedInstanceType;
-import static org.mockito.internal.exceptions.Reporter.mockedTypeIsInconsistentWithSpiedInstanceType;
-import static org.mockito.internal.exceptions.Reporter.usingConstructorWithFancySerializable;
+import org.mockito.mock.SerializableMode;
+import org.mockito.plugins.MockMaker.TypeMockability;
 
 import java.util.Collection;
 
-import org.mockito.mock.SerializableMode;
-import org.mockito.plugins.MockMaker.TypeMockability;
+import static org.mockito.internal.exceptions.Reporter.*;
 
 @SuppressWarnings("unchecked")
 public class MockCreationValidator {
@@ -41,7 +37,11 @@ public class MockCreationValidator {
         if (classToMock == null || spiedInstance == null) {
             return;
         }
-        if (!classToMock.equals(spiedInstance.getClass())) {
+//        if (!classToMock.equals(spiedInstance.getClass())) {
+//            throw mockedTypeIsInconsistentWithSpiedInstanceType(classToMock, spiedInstance);
+//        }
+
+        if(!classToMock.isAssignableFrom(spiedInstance.getClass())){
             throw mockedTypeIsInconsistentWithSpiedInstanceType(classToMock, spiedInstance);
         }
     }

@@ -4,19 +4,18 @@
  */
 package org.mockito.internal.util;
 
-import static org.mockito.internal.handler.MockHandlerFactory.createMockHandler;
-
 import org.mockito.Mockito;
 import org.mockito.exceptions.misusing.NotAMockException;
 import org.mockito.internal.InternalMockHandler;
 import org.mockito.internal.configuration.plugins.Plugins;
 import org.mockito.internal.creation.settings.CreationSettings;
-import org.mockito.internal.util.reflection.LenientCopyTool;
 import org.mockito.invocation.MockHandler;
 import org.mockito.mock.MockCreationSettings;
 import org.mockito.mock.MockName;
 import org.mockito.plugins.MockMaker;
 import org.mockito.plugins.MockMaker.TypeMockability;
+
+import static org.mockito.internal.handler.MockHandlerFactory.createMockHandler;
 
 @SuppressWarnings("unchecked")
 public class MockUtil {
@@ -34,10 +33,10 @@ public class MockUtil {
 
         T mock = mockMaker.createMock(settings, mockHandler);
 
-        Object spiedInstance = settings.getSpiedInstance();
-        if (spiedInstance != null) {
-            new LenientCopyTool().copyToMock(spiedInstance, mock);
-        }
+//        Object spiedInstance = settings.getSpiedInstance();
+//        if (spiedInstance != null) {
+//            new LenientCopyTool().copyToMock(spiedInstance, mock);
+//        }
 
         return mock;
     }

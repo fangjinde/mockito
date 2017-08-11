@@ -13,12 +13,12 @@ import org.mockito.invocation.Invocation;
 import org.mockito.invocation.Location;
 import org.mockito.invocation.StubInfo;
 
-import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+
+import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
 
 class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
 
@@ -33,11 +33,25 @@ class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
 
     private final Location location;
 
-    private boolean verified;
-    private boolean isIgnoredForVerification;
+    private boolean  verified;
+    private boolean  isIgnoredForVerification;
     private StubInfo stubInfo;
 
-    public InterceptedInvocation(Object mock,
+    private SuperMethod    superMethodHolder;
+    private MockitoMethod mockitoMethodHolder;
+    private Object        targetHolder;
+
+    public InterceptedInvocation(Object mock, MockitoMethod mockitoMethod, Object[] args,
+                                 SuperMethod superMethod, Location location, int sequenceNumber,Object target) {
+        this(mock, mockitoMethod, args, superMethod, location, sequenceNumber);
+
+        mockitoMethodHolder = mockitoMethod;
+        superMethodHolder = superMethod;
+        targetHolder = target;
+
+    }
+
+    private InterceptedInvocation(Object mock,
                                  MockitoMethod mockitoMethod,
                                  Object[] arguments,
                                  SuperMethod superMethod,
@@ -123,12 +137,20 @@ class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
         return (T) arguments[index];
     }
 
+//    @Override
+//    public Object callRealMethod() throws Throwable {
+//        if (!superMethod.isInvokable()) {
+//            throw cannotCallAbstractRealMethod();
+//        }
+//        return superMethod.invoke();
+//    }
+
     @Override
     public Object callRealMethod() throws Throwable {
         if (!superMethod.isInvokable()) {
             throw cannotCallAbstractRealMethod();
         }
-        return superMethod.invoke();
+        return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
     }
 
     @Override
