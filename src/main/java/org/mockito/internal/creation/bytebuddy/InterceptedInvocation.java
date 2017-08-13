@@ -150,6 +150,10 @@ class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
         if (!superMethod.isInvokable()) {
             throw cannotCallAbstractRealMethod();
         }
+
+        if(targetHolder==null){
+            return superMethod.invoke();
+        }
         return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
     }
 

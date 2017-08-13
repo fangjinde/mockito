@@ -138,6 +138,10 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
         if (method.isAbstract()) {
             throw cannotCallAbstractRealMethod();
         }
+
+        if(targetHolder==null){
+            return realMethod.invoke(mock, rawArguments);
+        }
         return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
     }
 
