@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
 
-class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
+public class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
 
     private static final long serialVersionUID = 475027563923510472L;
 
@@ -40,6 +40,12 @@ class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
     private SuperMethod    superMethodHolder;
     private MockitoMethod mockitoMethodHolder;
     private Object        targetHolder;
+
+    private boolean viaProxy=false;
+
+    public void setViaProxy(boolean viaProxy){
+        this.viaProxy=viaProxy;
+    }
 
     public InterceptedInvocation(Object mock, MockitoMethod mockitoMethod, Object[] args,
                                  SuperMethod superMethod, Location location, int sequenceNumber,Object target) {
@@ -151,7 +157,7 @@ class InterceptedInvocation implements Invocation, VerificationAwareInvocation {
             throw cannotCallAbstractRealMethod();
         }
 
-        if(targetHolder==null){
+        if(viaProxy||targetHolder==null){
             return superMethod.invoke();
         }
         return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());

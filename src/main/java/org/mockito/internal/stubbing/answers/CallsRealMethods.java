@@ -4,11 +4,14 @@
  */
 package org.mockito.internal.stubbing.answers;
 
-import java.io.Serializable;
-import java.lang.reflect.Modifier;
+import org.mockito.internal.creation.bytebuddy.InterceptedInvocation;
+import org.mockito.internal.invocation.InvocationImpl;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.mockito.stubbing.ValidableAnswer;
+
+import java.io.Serializable;
+import java.lang.reflect.Modifier;
 
 import static org.mockito.Answers.RETURNS_DEFAULTS;
 import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMethod;
@@ -36,10 +39,26 @@ import static org.mockito.internal.exceptions.Reporter.cannotCallAbstractRealMet
 public class CallsRealMethods implements Answer<Object>, ValidableAnswer, Serializable {
     private static final long serialVersionUID = 9057165148930624087L;
 
+    public CallsRealMethods(){}
+
+    private boolean viaProxy=false;
+
+    public CallsRealMethods(boolean viaProxy){
+        this.viaProxy=viaProxy;
+    }
+
     public Object answer(InvocationOnMock invocation) throws Throwable {
         if (Modifier.isAbstract(invocation.getMethod().getModifiers())) {
             return RETURNS_DEFAULTS.answer(invocation);
         }
+
+
+        if (invocation instanceof InvocationImpl){
+            ((InvocationImpl)invocation).setViaProxy(viaProxy);
+        }else if (invocation instanceof InterceptedInvocation){
+            ((InterceptedInvocation)invocation).setViaProxy(viaProxy);
+        }
+
         return invocation.callRealMethod();
     }
 

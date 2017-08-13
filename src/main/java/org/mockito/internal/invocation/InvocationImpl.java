@@ -42,6 +42,11 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
     final RealMethod realMethod;
     private StubInfo stubInfo;
 
+    private boolean viaProxy=false;
+
+    public void setViaProxy(boolean viaProxy){
+        this.viaProxy=viaProxy;
+    }
 
     private RealMethod    realMethodHolder;
     private MockitoMethod mockitoMethodHolder;
@@ -139,9 +144,10 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
             throw cannotCallAbstractRealMethod();
         }
 
-        if(targetHolder==null){
+        if (viaProxy||targetHolder==null){
             return realMethod.invoke(mock, rawArguments);
         }
+
         return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
     }
 

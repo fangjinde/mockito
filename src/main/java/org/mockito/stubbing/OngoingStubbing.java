@@ -179,6 +179,8 @@ public interface OngoingStubbing<T> {
      */
     OngoingStubbing<T> thenCallRealMethod();
 
+
+    OngoingStubbing<T> thenCallRealMethodViaProxy();
     /**
      * Sets a generic Answer for the method. E.g:
      * <pre class="code"><code class="java">

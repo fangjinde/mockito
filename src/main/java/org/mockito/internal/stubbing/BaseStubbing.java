@@ -67,4 +67,9 @@ public abstract class BaseStubbing<T> implements OngoingStubbing<T> {
     public OngoingStubbing<T> thenCallRealMethod() {
         return thenAnswer(new CallsRealMethods());
     }
+
+    public OngoingStubbing<T> thenCallRealMethodViaProxy() {
+        return thenAnswer(new CallsRealMethods(true));
+    }
+
 }
