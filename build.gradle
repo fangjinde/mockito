@@ -1,3 +1,5 @@
+
+
 buildscript {
     repositories {
         //mavenLocal() //for local testing of mockito-release-tools
@@ -42,6 +44,7 @@ apply from: 'gradle/mockito-core/license.gradle'
 apply from: 'gradle/mockito-core/testing.gradle'
 
 apply from: 'gradle/dependencies.gradle'
+apply from: 'gradle/maven_push.gradle'
 
 archivesBaseName = "mockito-core"
 
