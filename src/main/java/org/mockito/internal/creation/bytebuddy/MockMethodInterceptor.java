@@ -18,6 +18,7 @@ import org.mockito.mock.MockCreationSettings;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.Callable;
 
 public class MockMethodInterceptor implements Serializable {
@@ -36,10 +37,40 @@ public class MockMethodInterceptor implements Serializable {
         serializationSupport = new ByteBuddyCrossClassLoaderSerializationSupport();
     }
 
+
+    private static boolean mockToStringMethod(){
+        String mockToStringFucntion=System.getProperty("MOCKITO_MOCK_TO_STRING_METHOD");
+        if (mockToStringFucntion==null||mockToStringFucntion.trim().isEmpty()){
+            mockToStringFucntion=System.getenv("MOCKITO_MOCK_TO_STRING_METHOD");
+        }
+        if("true".equalsIgnoreCase(mockToStringFucntion)){
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isStaticMethod(Method invokedMethod) {
+        return Modifier.isStatic(invokedMethod.getModifiers());
+    }
+
+    private static boolean isToStringMethod(Method invokedMethod) {
+        if ("toString".equals(invokedMethod.getName())&& invokedMethod.getParameterTypes().length == 0
+            && invokedMethod.getReturnType() == String.class && !isStaticMethod(invokedMethod)
+            ) {
+            return true;
+        }
+        return false;
+    }
+
     Object doIntercept(Object mock,
                        Method invokedMethod,
                        Object[] arguments,
                        InterceptedInvocation.SuperMethod superMethod) throws Throwable {
+
+        if (isToStringMethod(invokedMethod)&&!mockToStringMethod()){
+           return superMethod.invoke();
+        }
+
         return doIntercept(
             mock,
             invokedMethod,
