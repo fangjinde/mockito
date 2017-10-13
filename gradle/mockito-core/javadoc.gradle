@@ -57,9 +57,9 @@ javadoc {
     """.replaceAll(/\r|\n|[ ]{8}/, ""))
     options.stylesheetFile rootProject.file("src/javadoc/stylesheet.css")
     options.addStringOption('top', """<script type="text/javascript" >
-        var l = window.location; 
-        if (l.protocol === "http" && l.origin.indexOf("javadoc.io") > -1) { 
-            l.protocol = "https"; 
+        var l = window.location;
+        if (l.protocol === "http" && l.origin.indexOf("javadoc.io") > -1) {
+            l.protocol = "https";
         }
         </script>
     """.replaceAll(/\r|\n|[ ]{8}/, ""))
@@ -84,12 +84,12 @@ javadoc {
         }
         try {
             logger.lifecycle("Installing sw-precache globally")
-            exec {
-                commandLine "npm", "install", "-g", "sw-precache"
-            }
-            exec {
-                commandLine "sw-precache", "--config=sw-precache-config.json"
-            }
+//            exec {
+//                commandLine "npm", "install", "-g", "sw-precache"
+//            }
+//            exec {
+//                commandLine "sw-precache", "--config=sw-precache-config.json"
+//            }
             // Even though there is an option ignoreExitValue for exec, exec keeps on throwing exceptions.
             // Therefore we just have to catch them and continue on with the build.
         } catch(Exception ignored) {

@@ -12,6 +12,7 @@ import org.mockito.invocation.Invocation;
 import org.mockito.invocation.Location;
 import org.mockito.invocation.StubInfo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -148,7 +149,12 @@ public class InvocationImpl implements Invocation, VerificationAwareInvocation {
             return realMethod.invoke(mock, rawArguments);
         }
 
-        return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
+        try{
+            return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
+        }catch (InvocationTargetException invocationTargetException){
+            throw invocationTargetException.getTargetException();
+        }
+
     }
 
     public void markVerified() {

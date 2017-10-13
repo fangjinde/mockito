@@ -14,6 +14,7 @@ import org.mockito.invocation.Location;
 import org.mockito.invocation.StubInfo;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -160,7 +161,11 @@ public class InterceptedInvocation implements Invocation, VerificationAwareInvoc
         if(viaProxy||targetHolder==null){
             return superMethod.invoke();
         }
-        return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
+        try{
+            return mockitoMethodHolder.getJavaMethod().invoke(targetHolder,getRawArguments());
+        }catch (InvocationTargetException invocationTargetException){
+            throw invocationTargetException.getTargetException();
+        }
     }
 
     @Override
